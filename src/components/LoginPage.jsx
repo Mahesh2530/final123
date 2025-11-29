@@ -23,6 +23,13 @@ export function LoginPage({ onLogin, onCreateAccount }) {
       const user = await getUserByEmail(email)
 
       if (user && user.password === password) {
+        // Check if admin account is blocked
+        if (user.role === 'admin' && user.isBlocked) {
+          alert("Your account has been blocked due to excessive poor reviews. Please contact support.")
+          setLoading(false)
+          return
+        }
+        
         onLogin(user.role, user.name, user.email)
       } else {
         alert("Invalid email or password. Please try again or create an account.")
@@ -43,10 +50,10 @@ export function LoginPage({ onLogin, onCreateAccount }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-black to-yellow-600 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl border-4 border-yellow-300">
+      <Card className="w-full max-w-md shadow-2xl border-4 border-yellow-300 animate-scale-in">
         <CardHeader className="space-y-2 text-center bg-gradient-to-r from-yellow-400 via-black to-yellow-500">
           <div className="flex justify-center mb-4">
-            <div className="bg-yellow-300 p-3 rounded-lg shadow-lg">
+            <div className="bg-yellow-300 p-3 rounded-lg shadow-lg animate-bounce-gentle">
               <BookOpen className="w-8 h-8 text-black" />
             </div>
           </div>
@@ -65,7 +72,7 @@ export function LoginPage({ onLogin, onCreateAccount }) {
               onChange={(e) => setEmail(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={loading}
-              className="border-2 border-yellow-400 focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600"
+              className="border-2 border-yellow-400 focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600 animate-slide-in-left focus-scale"
             />
             <Input
               placeholder="Password"
@@ -74,7 +81,7 @@ export function LoginPage({ onLogin, onCreateAccount }) {
               onChange={(e) => setPassword(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={loading}
-              className="border-2 border-yellow-400 focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600"
+              className="border-2 border-yellow-400 focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600 animate-slide-in-right focus-scale"
             />
 
             <div className="bg-yellow-900 border-2 border-yellow-400 rounded-lg p-4 text-sm text-yellow-100 font-semibold shadow-md">
@@ -85,7 +92,7 @@ export function LoginPage({ onLogin, onCreateAccount }) {
             <Button
               onClick={handleLogin}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold text-base h-12 shadow-lg transform hover:scale-105 transition disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black font-bold text-base h-12 shadow-lg hover-scale hover-shadow disabled:opacity-50 animate-fade-scale stagger-1"
               size="lg"
             >
               <LogIn className="w-4 h-4 mr-2" />

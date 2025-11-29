@@ -11,14 +11,86 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
   const [userType, setUserType] = useState(null)
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [institution, setInstitution] = useState("")
   const [loading, setLoading] = useState(false)
+  const [nameError, setNameError] = useState("")
+  const [phoneError, setPhoneError] = useState("")
+
+  const validateName = (value) => {
+    const nameRegex = /^[A-Za-z\s]+$/
+    if (!value.trim()) {
+      setNameError("Name is required")
+      return false
+    }
+    if (!nameRegex.test(value)) {
+      setNameError("Name can only contain letters and spaces")
+      return false
+    }
+    setNameError("")
+    return true
+  }
+
+  const validatePhone = (value) => {
+    const phoneRegex = /^[0-9]{10}$/
+    if (!value.trim()) {
+      setPhoneError("Phone number is required")
+      return false
+    }
+    if (!phoneRegex.test(value)) {
+      setPhoneError("Phone number must be exactly 10 digits")
+      return false
+    }
+    setPhoneError("")
+    return true
+  }
+
+  const handleNameChange = (e) => {
+    const value = e.target.value
+    const nameRegex = /^[A-Za-z\s]*$/
+    if (nameRegex.test(value)) {
+      setName(value)
+      if (value.trim()) {
+        validateName(value)
+      } else {
+        setNameError("")
+      }
+    }
+  }
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value
+    const phoneRegex = /^[0-9]*$/
+    if (phoneRegex.test(value) && value.length <= 10) {
+      setPhone(value)
+      if (value.length === 10) {
+        validatePhone(value)
+      } else if (value.length > 0) {
+        setPhoneError("Phone number must be 10 digits")
+      } else {
+        setPhoneError("")
+      }
+    }
+  }
 
   const handleSignUp = async () => {
-    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim() || !institution.trim()) {
+    const isNameValid = validateName(name)
+    const isPhoneValid = validatePhone(phone)
+
+    if (!name.trim() || !email.trim() || !phone.trim() || !password.trim() || !confirmPassword.trim() || !institution.trim()) {
       alert("Please fill all fields")
+      return
+    }
+
+    if (!email.includes('@')) {
+      alert("Email must contain @ character")
+      return
+    }
+
+    if (!isNameValid || !isPhoneValid) {
+      alert("Please fix the errors in the form")
       return
     }
 
@@ -29,6 +101,12 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
 
     if (password.length < 6) {
       alert("Password must be at least 6 characters")
+      return
+    }
+
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/
+    if (!specialCharRegex.test(password)) {
+      alert("Password must contain at least one special character")
       return
     }
 
@@ -44,10 +122,13 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
         id: Date.now(),
         name,
         email,
+        phone,
         password,
         role: userType,
         institution,
         createdAt: new Date().toISOString(),
+        isBlocked: false,
+        oneStarReviewCount: 0,
       }
 
       await addUser(newUser)
@@ -64,10 +145,10 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-400 via-black to-yellow-600 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl border-4 border-yellow-400">
+      <Card className="w-full max-w-md shadow-2xl border-4 border-yellow-400 animate-scale-in">
         <CardHeader className="space-y-2 text-center bg-gradient-to-r from-yellow-500 via-black to-yellow-500">
           <div className="flex justify-center mb-4">
-            <div className="bg-yellow-400 p-3 rounded-lg shadow-lg">
+            <div className="bg-yellow-400 p-3 rounded-lg shadow-lg animate-bounce-gentle">
               <BookOpen className="w-8 h-8 text-black" />
             </div>
           </div>
@@ -82,7 +163,7 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
               <Button
                 onClick={() => setUserType("admin")}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-base h-12 shadow-lg transform hover:scale-105 transition disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold text-base h-12 shadow-lg hover-scale hover-shadow disabled:opacity-50 animate-fade-scale stagger-1"
                 size="lg"
               >
                 Admin
@@ -90,7 +171,7 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
               <Button
                 onClick={() => setUserType("student")}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-base h-12 shadow-lg transform hover:scale-105 transition disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-base h-12 shadow-lg hover-scale hover-shadow disabled:opacity-50 animate-fade-scale stagger-2"
                 size="lg"
               >
                 Student
@@ -123,13 +204,16 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
                 </Button>
               </div>
 
-              <Input
-                placeholder="Full Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={loading}
-                className="border-2 border-yellow-400 focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600"
-              />
+              <div>
+                <Input
+                  placeholder="Full Name (Letters only)"
+                  value={name}
+                  onChange={handleNameChange}
+                  disabled={loading}
+                  className={`border-2 ${nameError ? 'border-red-500' : 'border-yellow-400'} focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600`}
+                />
+                {nameError && <p className="text-red-400 text-xs mt-1 font-semibold">{nameError}</p>}
+              </div>
               <Input
                 placeholder="Email Address"
                 type="email"
@@ -138,6 +222,17 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
                 disabled={loading}
                 className="border-2 border-yellow-400 focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600"
               />
+              <div>
+                <Input
+                  placeholder="Phone Number (10 digits)"
+                  value={phone}
+                  onChange={handlePhoneChange}
+                  disabled={loading}
+                  maxLength={10}
+                  className={`border-2 ${phoneError ? 'border-red-500' : 'border-yellow-400'} focus:border-yellow-300 font-semibold bg-black text-yellow-100 placeholder-yellow-600`}
+                />
+                {phoneError && <p className="text-red-400 text-xs mt-1 font-semibold">{phoneError}</p>}
+              </div>
               <Input
                 placeholder="Institution/Organization"
                 value={institution}
@@ -165,7 +260,12 @@ export function CreateAccountPage({ onSignUp, onBackToLogin }) {
               <div className="bg-yellow-900 border-2 border-yellow-400 rounded-lg p-4 text-sm text-yellow-100 font-semibold shadow-md">
                 <p className="font-bold mb-2 text-yellow-300">Password Requirements:</p>
                 <p>• Minimum 6 characters</p>
+                <p>• At least one special character (!@#$%^&*)</p>
                 <p>• Must match confirmation password</p>
+              </div>
+              <div className="bg-yellow-900 border-2 border-yellow-400 rounded-lg p-4 text-sm text-yellow-100 font-semibold shadow-md">
+                <p className="font-bold mb-2 text-yellow-300">Email Requirements:</p>
+                <p>• Must contain @ character</p>
               </div>
 
               <div className="flex gap-3">

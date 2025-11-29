@@ -197,6 +197,30 @@ export const deleteUser = async (id) => {
   })
 }
 
+export const updateResource = async (resource) => {
+  const db = await initializeDB()
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([RESOURCES_STORE], "readwrite")
+    const store = transaction.objectStore(RESOURCES_STORE)
+    const request = store.put(resource)
+
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
+export const updateUser = async (user) => {
+  const db = await initializeDB()
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction([USERS_STORE], "readwrite")
+    const store = transaction.objectStore(USERS_STORE)
+    const request = store.put(user)
+
+    request.onsuccess = () => resolve(request.result)
+    request.onerror = () => reject(request.error)
+  })
+}
+
 export const clearAllData = async () => {
   const db = await initializeDB()
   return new Promise((resolve, reject) => {
