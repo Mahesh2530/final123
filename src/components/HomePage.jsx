@@ -3,7 +3,7 @@
 import { Button } from "./ui/button"
 import { BookOpen, Users, Upload, Search } from "lucide-react"
 
-export function HomePage({ userName, onLogout, onEnterLibrary }) {
+export function HomePage({ userName, onLogout, onEnterLibrary, onLogin, onCreateAccount }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-green-50 to-red-50">
       {/* Header */}
@@ -50,12 +50,21 @@ export function HomePage({ userName, onLogout, onEnterLibrary }) {
               </div>
             </div>
           ) : (
-            <Button
-              onClick={() => (window.location.href = "/")}
-              className="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 font-bold px-10 py-4 text-lg shadow-lg transform hover:scale-105 transition"
-            >
-              Get Started
-            </Button>
+            <div className="flex gap-4 justify-center animate-bounce-in">
+              <Button
+                onClick={onLogin}
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold px-10 py-4 text-lg shadow-lg hover-scale hover-shadow"
+              >
+                Login
+              </Button>
+              <Button
+                onClick={onCreateAccount}
+                variant="outline"
+                className="bg-white text-green-600 border-2 border-green-600 hover:bg-green-50 font-bold px-10 py-4 text-lg shadow-lg hover-scale hover-shadow"
+              >
+                Create Account
+              </Button>
+            </div>
           )}
         </div>
 

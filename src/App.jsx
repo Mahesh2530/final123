@@ -15,6 +15,7 @@ export default function App() {
   const [userEmail, setUserEmail] = useState("")
   const [showCreateAccount, setShowCreateAccount] = useState(false)
   const [showStudentHome, setShowStudentHome] = useState(false)
+  const [showWelcomePage, setShowWelcomePage] = useState(true)
 
   const handleLogin = (role, name, email) => {
     setUserRole(role)
@@ -39,6 +40,7 @@ export default function App() {
     setUserEmail("")
     setShowCreateAccount(false)
     setShowStudentHome(false)
+    setShowWelcomePage(true)
   }
 
   const handleBackToStudentHome = () => {
@@ -52,11 +54,27 @@ export default function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <div>
-        {!isLoggedIn ? (
+        {showWelcomePage && !isLoggedIn ? (
+          <HomePage 
+            onLogin={() => {
+              setShowWelcomePage(false)
+            }} 
+            onCreateAccount={() => {
+              setShowWelcomePage(false)
+              setShowCreateAccount(true)
+            }}
+          />
+        ) : !isLoggedIn ? (
           showCreateAccount ? (
-            <CreateAccountPage onSignUp={handleSignUp} onBackToLogin={() => setShowCreateAccount(false)} />
+            <CreateAccountPage 
+              onSignUp={handleSignUp} 
+              onBackToLogin={() => setShowCreateAccount(false)} 
+            />
           ) : (
-            <LoginPage onLogin={handleLogin} onCreateAccount={() => setShowCreateAccount(true)} />
+            <LoginPage 
+              onLogin={handleLogin} 
+              onCreateAccount={() => setShowCreateAccount(true)} 
+            />
           )
         ) : userRole === "admin" ? (
           <AdminDashboard userName={userName} userEmail={userEmail} onLogout={handleLogout} />
