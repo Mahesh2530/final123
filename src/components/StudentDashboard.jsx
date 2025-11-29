@@ -17,7 +17,7 @@ import {
   TrendingUp,
   X,
 } from "lucide-react"
-import { getResources, addReview, getReviews, initializeDB, updateResource, getResourceById, getAllUsers, updateUser } from "../utils/indexeddb"
+import { getResources, addReview, getReviews, initializeDB, updateResource, getResourceById, getAllUsers, updateUser } from "../utils/supabasedb"
 
 export function StudentDashboard({ userName, onLogout, onBack }) {
   const [resources, setResources] = useState([])
