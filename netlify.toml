@@ -2,12 +2,6 @@
   command = "npm run build"
   publish = "dist"
 
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-  
-  [plugins.inputs]
-  disable = true
-
 [[redirects]]
   from = "/*"
   to = "/index.html"
