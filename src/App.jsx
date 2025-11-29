@@ -14,7 +14,6 @@ export default function App() {
   const [userName, setUserName] = useState("")
   const [userEmail, setUserEmail] = useState("")
   const [showCreateAccount, setShowCreateAccount] = useState(false)
-  const [showStudentHome, setShowStudentHome] = useState(false)
   const [showWelcomePage, setShowWelcomePage] = useState(true)
 
   const handleLogin = (role, name, email) => {
@@ -22,9 +21,6 @@ export default function App() {
     setUserName(name)
     setUserEmail(email)
     setIsLoggedIn(true)
-    if (role === "student") {
-      setShowStudentHome(true)
-    }
   }
 
   const handleSignUp = (role, name, email) => {
@@ -39,16 +35,7 @@ export default function App() {
     setUserName("")
     setUserEmail("")
     setShowCreateAccount(false)
-    setShowStudentHome(false)
     setShowWelcomePage(true)
-  }
-
-  const handleBackToStudentHome = () => {
-    setShowStudentHome(true)
-  }
-
-  const handleEnterLibrary = () => {
-    setShowStudentHome(false)
   }
 
   return (
@@ -79,11 +66,7 @@ export default function App() {
         ) : userRole === "admin" ? (
           <AdminDashboard userName={userName} userEmail={userEmail} onLogout={handleLogout} />
         ) : userRole === "student" ? (
-          showStudentHome ? (
-            <HomePage userName={userName} onLogout={handleLogout} onEnterLibrary={handleEnterLibrary} />
-          ) : (
-            <StudentDashboard userName={userName} onLogout={handleLogout} onBack={handleBackToStudentHome} />
-          )
+          <StudentDashboard userName={userName} onLogout={handleLogout} onBack={handleLogout} />
         ) : (
           <HomePage />
         )}

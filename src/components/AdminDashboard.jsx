@@ -5,7 +5,7 @@ import { Button } from "./ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Input } from "./ui/input"
 import { Upload, LogOut, Trash2, BookOpen, FileText, File, TrendingUp, Star, MessageCircle } from "lucide-react"
-import { addResource, getResources, deleteResource, initializeDB, getReviews } from "../utils/supabasedb"
+import { addResource, getResources, deleteResource, initializeDB, getReviews } from "../utils/indexeddb"
 
 export function AdminDashboard({ userName, onLogout, userEmail }) {
   const [resources, setResources] = useState([])

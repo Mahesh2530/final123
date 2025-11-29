@@ -5,7 +5,7 @@ import { Button } from "./ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Input } from "./ui/input"
 import { BookOpen, LogIn, UserPlus } from "lucide-react"
-import { getUserByEmail } from "../utils/supabasedb"
+import { getUserByEmail } from "../utils/indexeddb"
 
 export function LoginPage({ onLogin, onCreateAccount }) {
   const [email, setEmail] = useState("")
